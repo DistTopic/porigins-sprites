@@ -43,3 +43,4 @@ jobs:
         with:
           commit_message: Update stats.json with global image and category counts
           file_pattern: stats.json
+          github_token: ${{ secrets.GHTOKEN }}
