@@ -1,0 +1,52 @@
+name: Count Sprites and Update Stats
+
+on:
+  push:
+    paths:
+      - 'sprites/**'
+      - '.github/workflows/count-sprites.yml'
+  workflow_dispatch:
+
+jobs:
+  count-sprites:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Count sprite files and categories
+        id: count
+        run: |
+          SPRITE_EXTENSIONS="png jpg jpeg bmp gif"
+          SPRITE_DIR="sprites"
+          CATEGORY_COUNT=0
+          SPRITE_COUNT=0
+          COMMUNITY_COUNT=0
+
+          # Count categories (subfolders)
+          if [ -d "$SPRITE_DIR" ]; then
+            CATEGORY_COUNT=$(find "$SPRITE_DIR" -mindepth 1 -type d | wc -l)
+          fi
+
+          # Count total sprite files
+          for ext in $SPRITE_EXTENSIONS; do
+            count=$(find "$SPRITE_DIR" -type f -iname "*.${ext}" | wc -l)
+            SPRITE_COUNT=$((SPRITE_COUNT + count))
+          done
+
+          # Optional: Count community sprites if you have a convention (e.g., folder "community" inside sprites)
+          if [ -d "$SPRITE_DIR/community" ]; then
+            for ext in $SPRITE_EXTENSIONS; do
+              count=$(find "$SPRITE_DIR/community" -type f -iname "*.${ext}" | wc -l)
+              COMMUNITY_COUNT=$((COMMUNITY_COUNT + count))
+            done
+          fi
+
+          # Write stats to stats.json
+          echo "{ \"total_sprites\": $SPRITE_COUNT, \"categories\": $CATEGORY_COUNT, \"community_sprites\": $COMMUNITY_COUNT }" > stats.json
+
+      - name: Commit and push stats.json
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update stats.json with sprite and category counts
+          file_pattern: stats.json
