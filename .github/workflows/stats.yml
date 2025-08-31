@@ -38,9 +38,13 @@ jobs:
           # Write stats to stats.json
           echo "{ \"total_sprites\": $TOTAL_IMAGES, \"categories\": $CATEGORY_COUNT }" > stats.json
 
-      - name: Commit and push stats.json
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: Update stats.json with global image and category counts
-          file_pattern: stats.json
-          github_token: ${{ secrets.GHTOKEN }}
+      - name: Commit and push stats.json using GHTOKEN
+        env:
+          GHTOKEN: ${{ secrets.GHTOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add stats.json
+          git commit -m "Update stats.json with global image and category counts" || exit 0
+          git remote set-url origin https://x-access-token:${GHTOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          git push origin HEAD:main
