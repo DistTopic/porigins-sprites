@@ -1,10 +1,14 @@
-name: Count Sprites and Update Stats
+name: Count All Images and Categories in Repository
 
 on:
   push:
     paths:
-      - 'sprites/**'
-      - '.github/workflows/count-sprites.yml'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '**.bmp'
+      - '**.gif'
+      - '.github/workflows/stats.yml'
   workflow_dispatch:
 
 jobs:
@@ -14,39 +18,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Count sprite files and categories
+      - name: Count all images and categories
         id: count
         run: |
-          SPRITE_EXTENSIONS="png jpg jpeg bmp gif"
-          SPRITE_DIR="sprites"
+          IMAGE_EXTENSIONS="png jpg jpeg bmp gif"
+          TOTAL_IMAGES=0
           CATEGORY_COUNT=0
-          SPRITE_COUNT=0
-          COMMUNITY_COUNT=0
 
-          # Count categories (subfolders)
-          if [ -d "$SPRITE_DIR" ]; then
-            CATEGORY_COUNT=$(find "$SPRITE_DIR" -mindepth 1 -type d | wc -l)
-          fi
-
-          # Count total sprite files
-          for ext in $SPRITE_EXTENSIONS; do
-            count=$(find "$SPRITE_DIR" -type f -iname "*.${ext}" | wc -l)
-            SPRITE_COUNT=$((SPRITE_COUNT + count))
+          # Count all image files recursively (ignore .git, .github and hidden folders)
+          for ext in $IMAGE_EXTENSIONS; do
+            count=$(find . -type f -iname "*.${ext}" ! -path "./.git/*" ! -path "./.github/*")
+            count=$(echo "$count" | wc -l)
+            TOTAL_IMAGES=$((TOTAL_IMAGES + count))
           done
 
-          # Optional: Count community sprites if you have a convention (e.g., folder "community" inside sprites)
-          if [ -d "$SPRITE_DIR/community" ]; then
-            for ext in $SPRITE_EXTENSIONS; do
-              count=$(find "$SPRITE_DIR/community" -type f -iname "*.${ext}" | wc -l)
-              COMMUNITY_COUNT=$((COMMUNITY_COUNT + count))
-            done
-          fi
+          # Count all folders (categories), excluding .git, .github and hidden folders
+          CATEGORY_COUNT=$(find . -type d ! -path "./.git*" ! -path "./.github*" ! -path "*/.*" ! -name "." | wc -l)
 
           # Write stats to stats.json
-          echo "{ \"total_sprites\": $SPRITE_COUNT, \"categories\": $CATEGORY_COUNT, \"community_sprites\": $COMMUNITY_COUNT }" > stats.json
+          echo "{ \"total_sprites\": $TOTAL_IMAGES, \"categories\": $CATEGORY_COUNT }" > stats.json
 
       - name: Commit and push stats.json
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Update stats.json with sprite and category counts
+          commit_message: Update stats.json with global image and category counts
           file_pattern: stats.json
