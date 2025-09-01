@@ -2,6 +2,8 @@ name: Count All Images and Categories in Repository
 
 on:
   push:
+    branches:
+      - develop
     paths:
       - '**.png'
       - '**.jpg'
@@ -17,6 +19,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: develop
 
       - name: Count all images and categories
         id: count
@@ -24,27 +28,19 @@ jobs:
           IMAGE_EXTENSIONS="png jpg jpeg bmp gif"
           TOTAL_IMAGES=0
           CATEGORY_COUNT=0
-
           # Count all image files recursively (ignore .git, .github and hidden folders)
           for ext in $IMAGE_EXTENSIONS; do
             count=$(find . -type f -iname "*.${ext}" ! -path "./.git/*" ! -path "./.github/*")
             count=$(echo "$count" | wc -l)
             TOTAL_IMAGES=$((TOTAL_IMAGES + count))
           done
-
-          # Count all folders (categories), excluding .git, .github and hidden folders
+          # Count all folders (categories), excluding .git, .github e hidden folders
           CATEGORY_COUNT=$(find . -type d ! -path "./.git*" ! -path "./.github*" ! -path "*/.*" ! -name "." | wc -l)
-
           # Write stats to stats.json
           echo "{ \"total_sprites\": $TOTAL_IMAGES, \"categories\": $CATEGORY_COUNT }" > stats.json
 
-      - name: Commit and push stats.json using GHTOKEN
-        env:
-          GHTOKEN: ${{ secrets.GHTOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add stats.json
-          git commit -m "Update stats.json with global image and category counts" || exit 0
-          git remote set-url origin https://x-access-token:${GHTOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          git push origin HEAD:main
+      - name: Commit and push stats.json (default GITHUB_TOKEN)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Update stats.json with global image and category counts
+          file_pattern: stats.json
