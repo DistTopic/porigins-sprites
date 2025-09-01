@@ -17,7 +17,6 @@ This repository serves as an archive and a resource for Poketibia-related projec
 
 - **Total Sprites:** ![Total Sprites](https://img.shields.io/badge/dynamic/json?color=green&label=Sprites&query=%24.total_sprites&url=https%3A%2F%2Fraw.githubusercontent.com%2FDistTopic%2Fporigins-sprites%2Fmain%2Fstats.json)
 - **Categories:** ![Categories](https://img.shields.io/badge/dynamic/json?color=blue&label=Categories&query=%24.categories&url=https%3A%2F%2Fraw.githubusercontent.com%2FDistTopic%2Fporigins-sprites%2Fmain%2Fstats.json)
-- **Community Contributions:** ![Community Contributions](https://img.shields.io/badge/dynamic/json?color=yellow&label=Community%20Sprites&query=%24.community_sprites&url=https%3A%2F%2Fraw.githubusercontent.com%2FDistTopic%2Fporigins-sprites%2Fmain%2Fstats.json)
 
 _Note: Statistics are updated automatically if `stats.json` is maintained in the repository._
 
