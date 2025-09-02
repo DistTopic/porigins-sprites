@@ -37,6 +37,7 @@ bld/
 
 # mac files
 .db
+*.bd
 .py
 
 # Visual Studio 2015/2017 cache/options directory
