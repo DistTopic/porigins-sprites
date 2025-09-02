@@ -2,7 +2,7 @@
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
-The POrigins Sprites Repository is a comprehensive collection of PNG sprites for the Poketibia server "Porigins". This is a media/asset repository containing over 22,000 sprites organized in categories for game items and Pokemon.
+The POrigins Sprites Repository is a comprehensive collection of PNG sprites for the Poketibia server "Porigins". This is a media/asset repository containing thousands of sprites organized in categories for game items and Pokemon.
 
 ## Working Effectively
 
@@ -26,7 +26,7 @@ The POrigins Sprites Repository is a comprehensive collection of PNG sprites for
 ### GitHub Workflow Operations
 - Stats generation runs automatically on pushes to `develop` branch
 - Workflow file: `.github/workflows/stats.yml`
-- Stats generation takes ~0.2 seconds - NEVER CANCEL (set timeout to 60+ seconds)
+- Stats generation is fast - NEVER CANCEL (set timeout to 60+ seconds)
 - Updates `stats.json` with current sprite and category counts
 - Triggered by changes to image files (png, jpg, jpeg, bmp, gif) or workflow file
 - Test command: `IMAGE_EXTENSIONS="png jpg jpeg bmp gif" && TOTAL_IMAGES=0 && for ext in $IMAGE_EXTENSIONS; do count=$(find . -type f -iname "*.${ext}" ! -path "./.git/*" ! -path "./.github/*" | wc -l); TOTAL_IMAGES=$((TOTAL_IMAGES + count)); done && echo "Total: $TOTAL_IMAGES"`
@@ -57,7 +57,7 @@ The POrigins Sprites Repository is a comprehensive collection of PNG sprites for
 ### Adding New Sprites
 - Identify appropriate category directory in `/items/` or `/pokemons/`
 - Place sprite files with descriptive names following existing patterns
-- Use Git to add and commit: `git add .` then `git commit -m "Add [description]"`
+- Use Git to add and commit: `git add .` then `git commit -m "feat: add [description]"`
 - Push changes to trigger stats update workflow
 
 ### Searching and Organizing
@@ -71,14 +71,27 @@ The POrigins Sprites Repository is a comprehensive collection of PNG sprites for
 - View recent changes: `git log --oneline -10`
 - See file differences: `git diff`
 - Add new sprites: `git add path/to/sprite.png`
-- Commit changes: `git commit -m "Descriptive message"`
+- Commit changes: `git commit -m "descriptive message"`
 
-## Repository Statistics (Current Validated Counts)
-- Total sprites: 22,036 PNG files (verified with find command)
-- Categories: 309 directories (verified with find command)
-- Main categories: items (75+ subcategories), pokemons (45+ Pokemon)
+### Git Commit Conventions
+- Use conventional commit format: `type: description`
+- All commit messages must be in lowercase
+- No emojis or emoticons in commit messages
+- Common types:
+  - `feat: add new pokemon sprites`
+  - `fix: correct sprite organization`
+  - `docs: update repository documentation`
+  - `refactor: reorganize sprite categories`
+  - `chore: update workflow configuration`
+- Example: `feat: add charizard shiny variants`
+- Example: `fix: move misplaced pokeball sprites to correct category`
+
+## Repository Statistics
+- Total sprites: Use `find . -type f -iname "*.png" ! -path "./.git/*" ! -path "./.github/*" | wc -l` to count current sprites
+- Categories: Use `find . -type d ! -path "./.git*" ! -path "./.github*" ! -path "*/.*" ! -name "." | wc -l` to count current categories
+- Main categories: items (multiple subcategories), pokemons (multiple Pokemon)
 - File types: Primarily PNG images, some directories contain variants (shiny, portrait, corpse)
-- Stats generation timing: ~0.2 seconds for full repository scan
+- Stats generation: Fast automated process for full repository scan
 
 ## File Organization Guidelines
 - Pokemon sprites go in `/pokemons/[number]-[name]/` format
